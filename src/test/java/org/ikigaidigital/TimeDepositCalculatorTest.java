@@ -1,5 +1,6 @@
 package org.ikigaidigital;
 
+import org.ikigaidigital.domain.TimeDeposit;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;

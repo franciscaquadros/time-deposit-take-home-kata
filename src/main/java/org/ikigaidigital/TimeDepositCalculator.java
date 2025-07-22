@@ -3,6 +3,7 @@ package org.ikigaidigital;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import org.ikigaidigital.domain.TimeDeposit;
 
 public class TimeDepositCalculator {
     public void updateBalance(List<TimeDeposit> xs) {
