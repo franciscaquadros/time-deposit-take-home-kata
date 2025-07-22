@@ -8,3 +8,8 @@ __pycache__/
 .idea/
 package-lock.json
 .vscode/
+
+### IntelliJ IDEA ###
+*.iws
+*.iml
+*.ipr
