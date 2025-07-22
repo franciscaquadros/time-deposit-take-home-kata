@@ -1,4 +1,4 @@
-package org.ikigaidigital.domain;
+package org.ikigaidigital.domain.model;
 
 import java.time.LocalDate;
 
