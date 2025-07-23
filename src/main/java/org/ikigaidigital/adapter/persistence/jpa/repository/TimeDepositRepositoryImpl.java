@@ -29,10 +29,10 @@ public class TimeDepositRepositoryImpl implements TimeDepositRepository {
           var deposit = toDomain(entity);
           var withdrawals = withdrawalJpaRepository.findByTimeDepositId(deposit.getId()).stream()
               .map(this::mapWithdrawalToDomain)
-              .collect(Collectors.toList());
+              .toList();
           return new TimeDepositWithWithdrawals(deposit, withdrawals);
         })
-        .collect(Collectors.toList());
+        .toList();
   }
 
   @Override
@@ -40,14 +40,14 @@ public class TimeDepositRepositoryImpl implements TimeDepositRepository {
     List<TimeDepositEntity> entities = timeDepositJpaRepository.findAll();
     return entities.stream()
         .map(this::toDomain)
-        .collect(Collectors.toList());
+        .toList();
   }
 
   @Override
   public void saveAll(final List<TimeDeposit> deposits) {
     List<TimeDepositEntity> entities = deposits.stream()
         .map(this::toEntity)
-        .collect(Collectors.toList());
+        .toList();
     timeDepositJpaRepository.saveAll(entities);
   }
 
