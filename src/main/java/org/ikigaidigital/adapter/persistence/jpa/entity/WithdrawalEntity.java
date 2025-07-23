@@ -1,4 +1,4 @@
-package org.ikigaidigital.infrastructure.persistence.jpa.entity;
+package org.ikigaidigital.adapter.persistence.jpa.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
