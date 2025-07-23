@@ -24,6 +24,9 @@ public class TimeDepositWithWithdrawals {
     this.withdrawals = withdrawals;
   }
 
+  public TimeDepositWithWithdrawals() {
+  }
+
   public int getId() {
     return id;
   }

@@ -15,4 +15,19 @@ public class Withdrawal {
     this.amount = amount;
     this.date = date;
   }
+
+  public Withdrawal() {
+  }
+
+  public int getId() {
+    return id;
+  }
+
+  public Double getAmount() {
+    return amount;
+  }
+
+  public LocalDate getDate() {
+    return date;
+  }
 }
