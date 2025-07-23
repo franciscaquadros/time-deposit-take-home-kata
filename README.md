@@ -1,61 +1,96 @@
 # Time Deposit Refactoring Kata - Take home assignment
 ## XA bank time deposit
 
-## Context
-A junior developer implemented some domain logic in a time deposit system but did not complete the API functionality. Your task is to refactor the existing codebase to implement all required functionalities based on the provided business requirements, ensuring no breaking changes occur.
+# Time Deposit Java Application
 
-## Requirements
+This is a Spring Boot application built with Maven. This guide explains how to run the application from the command line.
 
-1. **API Endpoint**:
-  - Create a Restful API endpoint for updating the balances of all time deposits in the database.
-  - Create a Restful API endpoint to get all time deposits.
-    - Get API should return a list of all time deposits with this schema:
-      - id
-      - planType
-      - balance
-      - days
-      - withdrawals
-  - Choose any API framework you prefer.
+---
 
-2. **Database Setup**:
-  - Store all time deposit plans in a database.
-  - Define the following tables:
-    - `timeDeposits`:
-      - `id`: Integer (primary key)
-      - `planType`: String (required)
-      - `days`: Integer (required)
-      - `balance`: Decimal (required)
-    - `withdrawals`:
-      - `id`: Integer (primary key)
-      - `timeDepositId`: Integer (Foreign Key, required)
-      - `amount`: Decimal (required)
-      - `date`: Date (required)
+## 📦 Prerequisites
 
-3. **Interest Calculation**:
-  - Implement logic to calculate monthly interest based on the plan type:
-    - **Basic plan**: 1% interest
-    - **Student plan**: 3% interest (no interest after 1 year)
-    - **Premium plan**: 5% interest (interest starts after 45 days)
-  - No interest for the first 30 days for all plans.
+Before you begin, ensure you have the following installed:
 
-4. **Refactoring Constraints**:
-  - Do not introduce breaking changes to the shared `TimeDeposit` class or modify the `updateBalance` method signature.
-  - Ensure your design is extensible to accommodate future complexities in interest calculations.
+- Java 17 (check with `java -version`)
+- Maven 3.6+ (check with `mvn -version`)
 
-5. **Code Quality**:
-  - Adhere to SOLID principles, design patterns, and clean code practices where applicable.
+---
 
-## Important Guidelines
-- The existing `TimeDepositCalculator.updateBalance` method is functioning correctly. After refactoring, ensure that the behavior of this method remains unchanged.
-- Your final solution should include **two API endpoints**. Do not develop additional endpoints.
-- **Do not** create a pull request or a new branch in the ikigai-digital repository. Instead, fork this repository into your own GitHub repository and develop the solution there.
-- No need to handle invalid input / exceptions.
+## 🚀 Building and Running the Application
 
-## Bonus
-- Embrace Hexagonal Architecture, Clean Architecture, or any other architectural patterns that you find suitable.
-- Atomic commits
-- Test containers
+The simplest way to run the application is to use Maven. Navigate to the main folder of the project and run the following command:
 
-## Submission Instructions
-- Include clear instructions on how to run the application.
-- Email the link to your public GitHub repository.
+```bash
+mvn spring-boot:run
+```
+
+After that, you can request the following endpoints using curl or Postman:
+
+## 🌐 API Endpoints
+
+### 1. Get All Time Deposits
+- **Endpoint**: `GET /api/time-deposits`
+- **Description**: Returns a list of all time deposits.
+- **Response Body**:
+```json 
+  [
+  {
+    "id": 1,
+    "planType": "basic",
+    "balance": 1000.0,
+    "days": 45,
+    "withdrawals": [
+      {
+        "id": 1,
+        "amount": 100.0,
+        "date": "2025-07-23"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "planType": "student",
+    "balance": 1000.0,
+    "days": 60,
+    "withdrawals": [
+      {
+        "id": 2,
+        "amount": 50.0,
+        "date": "2025-07-23"
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "planType": "premium",
+    "balance": 1000.0,
+    "days": 120,
+    "withdrawals": [
+      {
+        "id": 3,
+        "amount": 25.0,
+        "date": "2025-07-23"
+      }
+    ]
+  }
+]
+```
+- **Response**: 200 OK
+
+### 2. Update All Time Deposits
+- **Endpoint**: `PUT /api/time-deposits/balances`
+- **Description**: Update All Time Deposits with the correspondent interest calculator.
+- **Response**: 200 OK (Empty Response)
+
+## 📝 Considerations
+
+- The application uses an in-memory database `(H2)` for simplicity. In a production environment, we should consider using a persistent database.
+- The application is built with Spring Boot.
+- Swagger could be used to better document the API, but due to time constraints, it was not implemented.
+- The class `DataInitializer` was created just to add some `TimeDeposits` and `Withdrawals` to the database to allow testing the endpoints. This is due to the fact that no endpoint is exposed to insert this data.
+- `TestContainers` were used to test the application with a postgres database. This is a good practice to ensure that the application works with a real database in a CI/CD pipeline. To call the endpoints, `TestRestTemplate`was used.
+- Separate `strategy` classes were created to handle the interest calculation for each plan type. This allows for easy extension in the future if new plan types are added.
+- The development of this application was done having the hexagonal architecture in mind:
+  - The domain contains the business rules - like definition of our `TimeDeposit` and `Withdrawal` domain entities, the calculation of interest values and a port to the data layer (repository).
+  - The application contains the use cases (like `UpdateBalanceUseCase` and `GetAllTimeDepositsUseCase`)
+  - The adapter connects the application to the outside world (like the REST controller and the data layer). For persistence the Jpa framework was chosen and for web REST was the protocol chosen to expose the endpoints.
