@@ -5,6 +5,7 @@ import org.ikigaidigital.domain.model.TimeDeposit;
 import org.ikigaidigital.domain.port.TimeDepositRepository;
 import org.ikigaidigital.domain.service.calculator.TimeDepositCalculator;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UpdateBalanceUseCase {
@@ -17,8 +18,9 @@ public class UpdateBalanceUseCase {
     this.calculator = calculator;
   }
 
+  @Transactional
   public void execute() {
-    List<TimeDeposit> deposits = timeDepositRepository.findAll();
+    List<TimeDeposit> deposits = timeDepositRepository.findAllForUpdate();
     calculator.updateBalance(deposits);
     timeDepositRepository.saveAll(deposits);
   }

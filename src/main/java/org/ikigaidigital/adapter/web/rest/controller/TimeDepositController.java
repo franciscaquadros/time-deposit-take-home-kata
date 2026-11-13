@@ -1,7 +1,7 @@
 package org.ikigaidigital.adapter.web.rest.controller;
 
 import java.util.List;
-import org.ikigaidigital.application.model.TimeDepositWithWithdrawals;
+import org.ikigaidigital.domain.model.TimeDepositWithWithdrawals;
 import org.ikigaidigital.application.usecase.GetAllTimeDepositsUseCase;
 import org.ikigaidigital.application.usecase.UpdateBalanceUseCase;
 import org.springframework.http.ResponseEntity;
