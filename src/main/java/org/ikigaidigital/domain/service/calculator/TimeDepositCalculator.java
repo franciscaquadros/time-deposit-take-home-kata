@@ -4,9 +4,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 import org.ikigaidigital.domain.model.TimeDeposit;
-import org.springframework.stereotype.Component;
 
-@Component
 public class TimeDepositCalculator {
 
     private final List<InterestCalculator> calculators;
@@ -15,10 +13,10 @@ public class TimeDepositCalculator {
         this.calculators = calculators;
     }
 
-    //keep the method signature, this is why the keyword final is not used here
-    public void updateBalance(List<TimeDeposit> xs) {
+    /** Applies one monthly interest credit; the public signature is fixed by the kata. */
+    public void updateBalance(List<TimeDeposit> deposits) {
 
-        for (final TimeDeposit deposit : xs) {
+        for (final TimeDeposit deposit : deposits) {
             double interest = calculateInterest(deposit);
             double newBalance = deposit.getBalance() + round(interest);
             deposit.setBalance(newBalance);

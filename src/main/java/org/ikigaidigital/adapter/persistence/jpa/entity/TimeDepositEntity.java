@@ -1,5 +1,6 @@
 package org.ikigaidigital.adapter.persistence.jpa.entity;
 
+import java.math.BigDecimal;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -8,7 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "timeDeposits")
+@Table(name = "time_deposits")
 public class TimeDepositEntity {
 
   @Id
@@ -21,13 +22,13 @@ public class TimeDepositEntity {
   @Column(nullable = false)
   private Integer days;
 
-  @Column(nullable = false)
-  private Double balance;
+  @Column(nullable = false, precision = 19, scale = 2)
+  private BigDecimal balance;
 
   public TimeDepositEntity() {
   }
 
-  public TimeDepositEntity(final Integer id, final String planType, final Integer days, final Double balance) {
+  public TimeDepositEntity(final Integer id, final String planType, final Integer days, final BigDecimal balance) {
     this.id = id;
     this.planType = planType;
     this.days = days;
@@ -58,11 +59,11 @@ public class TimeDepositEntity {
     this.days = days;
   }
 
-  public Double getBalance() {
+  public BigDecimal getBalance() {
     return balance;
   }
 
-  public void setBalance(final Double balance) {
+  public void setBalance(final BigDecimal balance) {
     this.balance = balance;
   }
 }

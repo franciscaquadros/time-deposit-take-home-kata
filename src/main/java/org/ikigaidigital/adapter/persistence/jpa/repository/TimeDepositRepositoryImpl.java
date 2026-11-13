@@ -1,10 +1,12 @@
 package org.ikigaidigital.adapter.persistence.jpa.repository;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import org.ikigaidigital.adapter.persistence.jpa.entity.TimeDepositEntity;
 import org.ikigaidigital.adapter.persistence.jpa.entity.WithdrawalEntity;
-import org.ikigaidigital.application.model.TimeDepositWithWithdrawals;
+import org.ikigaidigital.domain.model.TimeDepositWithWithdrawals;
 import org.ikigaidigital.domain.model.TimeDeposit;
 import org.ikigaidigital.domain.model.Withdrawal;
 import org.ikigaidigital.domain.port.TimeDepositRepository;
@@ -24,20 +26,21 @@ public class TimeDepositRepositoryImpl implements TimeDepositRepository {
 
   @Override
   public List<TimeDepositWithWithdrawals> findAllWithWithdrawals() {
+    Map<Integer, List<Withdrawal>> withdrawalsByDeposit = withdrawalJpaRepository.findAll().stream()
+        .collect(Collectors.groupingBy(WithdrawalEntity::getTimeDepositId,
+            Collectors.mapping(this::mapWithdrawalToDomain, Collectors.toList())));
     return timeDepositJpaRepository.findAll().stream()
         .map(entity -> {
           var deposit = toDomain(entity);
-          var withdrawals = withdrawalJpaRepository.findByTimeDepositId(deposit.getId()).stream()
-              .map(this::mapWithdrawalToDomain)
-              .toList();
+          var withdrawals = withdrawalsByDeposit.getOrDefault(deposit.getId(), List.of());
           return new TimeDepositWithWithdrawals(deposit, withdrawals);
         })
         .toList();
   }
 
   @Override
-  public List<TimeDeposit> findAll() {
-    List<TimeDepositEntity> entities = timeDepositJpaRepository.findAll();
+  public List<TimeDeposit> findAllForUpdate() {
+    List<TimeDepositEntity> entities = timeDepositJpaRepository.findAllForUpdate();
     return entities.stream()
         .map(this::toDomain)
         .toList();
@@ -55,7 +58,7 @@ public class TimeDepositRepositoryImpl implements TimeDepositRepository {
     TimeDepositEntity entity = new TimeDepositEntity();
     entity.setId(deposit.getId());
     entity.setPlanType(deposit.getPlanType());
-    entity.setBalance(deposit.getBalance());
+    entity.setBalance(BigDecimal.valueOf(deposit.getBalance()));
     entity.setDays(deposit.getDays());
     return entity;
   }
@@ -64,7 +67,7 @@ public class TimeDepositRepositoryImpl implements TimeDepositRepository {
     return new TimeDeposit(
         entity.getId(),
         entity.getPlanType(),
-        entity.getBalance(),
+        entity.getBalance().doubleValue(),
         entity.getDays()
     );
   }
@@ -72,7 +75,7 @@ public class TimeDepositRepositoryImpl implements TimeDepositRepository {
   private Withdrawal mapWithdrawalToDomain(final WithdrawalEntity entity) {
     return new Withdrawal(
         entity.getId(),
-        entity.getAmount(),
+        entity.getAmount().doubleValue(),
         entity.getDate()
     );
   }

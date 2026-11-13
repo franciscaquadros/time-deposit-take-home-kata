@@ -1,14 +1,19 @@
 package org.ikigaidigital.util;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import org.ikigaidigital.adapter.persistence.jpa.entity.TimeDepositEntity;
 import org.ikigaidigital.adapter.persistence.jpa.entity.WithdrawalEntity;
 import org.ikigaidigital.adapter.persistence.jpa.repository.TimeDepositJpaRepository;
 import org.ikigaidigital.adapter.persistence.jpa.repository.WithdrawalJpaRepository;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
+/** Optional sample data for trying the two endpoints locally. */
 @Component
+@Profile("demo")
 public class DataInitializer implements CommandLineRunner {
   private final TimeDepositJpaRepository depositRepo;
   private final WithdrawalJpaRepository withdrawalRepo;
@@ -19,21 +24,20 @@ public class DataInitializer implements CommandLineRunner {
   }
 
   @Override
+  @Transactional
   public void run(String... args) {
-    depositRepo.deleteAll();
-    withdrawalRepo.deleteAll();
+    if (depositRepo.count() > 0) {
+      return;
+    }
+    addDeposit("basic", 45, "100.00");
+    addDeposit("student", 60, "50.00");
+    addDeposit("premium", 120, "25.00");
+  }
 
-    // Create basic deposit and withdrawal
-    var basic = depositRepo.save(new TimeDepositEntity(null, "basic", 45, 1000.0));
-    withdrawalRepo.save(new WithdrawalEntity(null, basic.getId(), 100.0, LocalDate.now()));
-
-    // Create student deposit and withdrawal
-    var student = depositRepo.save(new TimeDepositEntity(null, "student", 60, 1000.0));
-    withdrawalRepo.save(new WithdrawalEntity(null, student.getId(), 50.0, LocalDate.now()));
-
-    // Create premium deposit and withdrawal
-    var premium = depositRepo.save(new TimeDepositEntity(null, "premium", 120, 1000.0));
-    withdrawalRepo.save(new WithdrawalEntity(null, premium.getId(), 25.0, LocalDate.now()));
-
+  private void addDeposit(String planType, int days, String withdrawalAmount) {
+    var deposit = depositRepo.save(
+        new TimeDepositEntity(null, planType, days, new BigDecimal("1000.00")));
+    withdrawalRepo.save(new WithdrawalEntity(null, deposit.getId(),
+        new BigDecimal(withdrawalAmount), LocalDate.of(2025, 7, 23)));
   }
 }
